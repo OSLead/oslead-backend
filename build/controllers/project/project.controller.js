@@ -95,7 +95,7 @@ const ENROLL_PROJECT = (req, res) => __awaiter(void 0, void 0, void 0, function*
         if (!user) {
             return res.status(400).json({ message: response_messages_1.ERRORS_MESSAGE.ERROR_400 });
         }
-        if (user.enrolledProjects.length >= 3) {
+        if (user.enrolledProjects && user.enrolledProjects.length >= 3) {
             return res.status(400).json({ message: response_messages_1.ERRORS_MESSAGE.MAX_PROJECTS });
         }
         const isEnrolledProject = user.enrolledProjects.find((project) => project.projectId === projectId);

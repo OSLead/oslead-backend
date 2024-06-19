@@ -49,14 +49,12 @@ passport_1.default.deserializeUser(function (obj, cb) {
 const auth_route_1 = __importDefault(require("./routes/auth.route"));
 const maintainer_route_1 = __importDefault(require("./routes/maintainer.route"));
 const error_route_1 = __importDefault(require("./routes/error.route"));
-const register_route_1 = __importDefault(require("./routes/register.route"));
 const project_route_1 = __importDefault(require("./routes/project.route"));
 const contributor_route_1 = __importDefault(require("./routes/contributor.route"));
 const ping_route_1 = __importDefault(require("./routes/ping.route"));
 app.use("/api/auth", auth_route_1.default);
 app.use("/api/auth/projectowner", maintainer_route_1.default);
 app.use("/api/error", error_route_1.default);
-app.use("/api/user", register_route_1.default);
 app.use("/", ping_route_1.default);
 app.use("/api/maintainer", maintainer_route_1.default);
 app.use("/api/contributor", contributor_route_1.default);
