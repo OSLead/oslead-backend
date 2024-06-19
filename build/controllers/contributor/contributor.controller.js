@@ -40,10 +40,15 @@ const getDashBoardProfile = (req, res) => __awaiter(void 0, void 0, void 0, func
         const evalDetails = yield evaluation_model_1.EvaluationStorage.findOne({
             github_id: userDetails.github_id,
         });
-        const rank = yield evaluation_model_1.EvaluationStorage.countDocuments({
-            totalPoints: { $gt: evalDetails === null || evalDetails === void 0 ? void 0 : evalDetails.totalPoints },
-        });
-        res.status(200).send({ userDetails, evalDetails, rank: rank + 1 });
+        let rank = 0;
+        if (evalDetails) {
+            rank = yield evaluation_model_1.EvaluationStorage.countDocuments({
+                totalPoints: { $gt: evalDetails === null || evalDetails === void 0 ? void 0 : evalDetails.totalPoints },
+            });
+        }
+        res
+            .status(200)
+            .send({ userDetails, evalDetails, rank: evalDetails && rank + 1 });
     }
     catch (error) {
         console.error(error);
