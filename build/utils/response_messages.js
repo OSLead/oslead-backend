@@ -37,5 +37,6 @@ const SUCCESS_MESSAGE = {
     PROJECT_CREATED_SUCCESS: "The project has been published.",
     ENROLLED_PROJECT_SUCCESS: "You have been enrolled in the project.",
     POINTS_CREDITED: "The points have been credited successfully.",
+    PROJECT_DELETED: "The project has been deleted successfully.",
 };
 exports.SUCCESS_MESSAGE = SUCCESS_MESSAGE;

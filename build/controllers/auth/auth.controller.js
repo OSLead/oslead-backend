@@ -24,7 +24,7 @@ const FE_USER_AUTH = process.env.FE_USER_AUTH ||
 const FE_PO_AUTH = process.env.FE_PO_AUTH ||
     "https://os-lead.vercel.app/auth/projectowner/github/token";
 const createAccount_CONTRIBUTOR = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f;
     try {
         const user = req.user;
         const userExists = yield checkIfUserExists(req, res);
@@ -37,12 +37,15 @@ const createAccount_CONTRIBUTOR = (req, res) => __awaiter(void 0, void 0, void 0
             res.redirect(`${FE_PO_AUTH}/${projectOwnerExists.token}`);
             return;
         }
+        if (!(user === null || user === void 0 ? void 0 : user.displayName) || !((_b = (_a = user === null || user === void 0 ? void 0 : user.emails) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.value)) {
+            return res.redirect(`https://os-lead.vercel.app/server-error`);
+        }
         const contributor = new contributor_model_1.User({
             name: user === null || user === void 0 ? void 0 : user.displayName,
-            email: (_c = (_b = (_a = user === null || user === void 0 ? void 0 : user.emails) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.value) !== null && _c !== void 0 ? _c : "nomail@gmail.com",
+            email: (_d = (_c = user === null || user === void 0 ? void 0 : user.emails) === null || _c === void 0 ? void 0 : _c[0]) === null || _d === void 0 ? void 0 : _d.value,
             github_id: user.id,
             username: user.username,
-            profile_picture: (_e = (_d = user.photos) === null || _d === void 0 ? void 0 : _d[0]) === null || _e === void 0 ? void 0 : _e.value,
+            profile_picture: (_f = (_e = user.photos) === null || _e === void 0 ? void 0 : _e[0]) === null || _f === void 0 ? void 0 : _f.value,
         });
         const roles = yield Role.find({
             name: { $in: "contributor" },
@@ -61,7 +64,7 @@ const createAccount_CONTRIBUTOR = (req, res) => __awaiter(void 0, void 0, void 0
 });
 exports.createAccount_CONTRIBUTOR = createAccount_CONTRIBUTOR;
 const createAccount_PROJECTOWNER = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _f, _g, _h;
+    var _g, _h, _j, _k;
     try {
         const user = req.user;
         const userExists = yield checkIfUserExists(req, res);
@@ -75,9 +78,12 @@ const createAccount_PROJECTOWNER = (req, res) => __awaiter(void 0, void 0, void 
             res.redirect(`${FE_PO_AUTH}/${projectOwnerExists.token}`);
             return;
         }
+        if (!(user === null || user === void 0 ? void 0 : user.displayName) || !((_h = (_g = user === null || user === void 0 ? void 0 : user.emails) === null || _g === void 0 ? void 0 : _g[0]) === null || _h === void 0 ? void 0 : _h.value)) {
+            return res.redirect(`https://os-lead.vercel.app/server-error`);
+        }
         const powner = new maintainer_model_1.Maintainer({
             name: user === null || user === void 0 ? void 0 : user.displayName,
-            email: (_h = (_g = (_f = user === null || user === void 0 ? void 0 : user.emails) === null || _f === void 0 ? void 0 : _f[0]) === null || _g === void 0 ? void 0 : _g.value) !== null && _h !== void 0 ? _h : "noemail@gmail.com",
+            email: (_k = (_j = user === null || user === void 0 ? void 0 : user.emails) === null || _j === void 0 ? void 0 : _j[0]) === null || _k === void 0 ? void 0 : _k.value,
             github_id: user.id,
             username: user.username,
         });
@@ -92,7 +98,7 @@ const createAccount_PROJECTOWNER = (req, res) => __awaiter(void 0, void 0, void 
     }
     catch (error) {
         console.error(error);
-        res.redirect(`https://os-lead.vercel.app/auth/projectowner/github/error`);
+        return res.redirect(`https://os-lead.vercel.app/server-error`);
         return;
     }
 });
