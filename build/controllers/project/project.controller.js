@@ -314,7 +314,7 @@ function extractGitHubInfo(url) {
 }
 var DifficultyPoints;
 (function (DifficultyPoints) {
-    DifficultyPoints[DifficultyPoints["EASY"] = 25] = "EASY";
-    DifficultyPoints[DifficultyPoints["MEDIUM"] = 50] = "MEDIUM";
-    DifficultyPoints[DifficultyPoints["HARD"] = 75] = "HARD";
+    DifficultyPoints[DifficultyPoints["EASY"] = 20] = "EASY";
+    DifficultyPoints[DifficultyPoints["MEDIUM"] = 30] = "MEDIUM";
+    DifficultyPoints[DifficultyPoints["HARD"] = 40] = "HARD";
 })(DifficultyPoints || (DifficultyPoints = {}));
