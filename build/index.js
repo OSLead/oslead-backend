@@ -49,16 +49,20 @@ passport_1.default.deserializeUser(function (obj, cb) {
 const auth_route_1 = __importDefault(require("./routes/auth.route"));
 const maintainer_route_1 = __importDefault(require("./routes/maintainer.route"));
 const error_route_1 = __importDefault(require("./routes/error.route"));
+const register_route_1 = __importDefault(require("./routes/register.route"));
 const project_route_1 = __importDefault(require("./routes/project.route"));
 const contributor_route_1 = __importDefault(require("./routes/contributor.route"));
 const ping_route_1 = __importDefault(require("./routes/ping.route"));
+const admin_route_1 = __importDefault(require("./routes/admin.route"));
 app.use("/api/auth", auth_route_1.default);
 app.use("/api/auth/projectowner", maintainer_route_1.default);
 app.use("/api/error", error_route_1.default);
+app.use("/api/user", register_route_1.default);
 app.use("/", ping_route_1.default);
 app.use("/api/maintainer", maintainer_route_1.default);
 app.use("/api/contributor", contributor_route_1.default);
 app.use("/api/projects", project_route_1.default);
+app.use("/api/admin", admin_route_1.default);
 const createRoles = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const countROLES = yield Role.estimatedDocumentCount();
@@ -69,9 +73,13 @@ const createRoles = () => __awaiter(void 0, void 0, void 0, function* () {
             const maintainerRole = new Role({
                 name: "maintainer",
             });
+            const adminRole = new Role({
+                name: "admin",
+            });
             console.log("Creating ROLES...");
             yield contributorRole.save();
             yield maintainerRole.save();
+            yield adminRole.save();
             console.log("ROLES created successfully ✅");
         }
         else {

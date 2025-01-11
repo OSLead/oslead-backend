@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 mongoose_1.default.Promise = global.Promise;
 const db = {
-    ROLES: ["contributor", "maintainer"],
+    ROLES: ["contributor", "maintainer", "admin"],
     roles: require("./roles.model"),
     mongoose: mongoose_1.default,
 };

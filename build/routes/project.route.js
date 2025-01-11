@@ -10,7 +10,6 @@ const verifyrole_middleware_1 = require("../middlewares/verifyrole.middleware");
 const project_middleware_1 = require("../middlewares/project.middleware");
 const router = express_1.default.Router();
 router.post("/create-project", [verifyjwt_middleware_1.VERIFY_TOKEN, verifyrole_middleware_1.VERIFY_ROLE_MAINTAINER, project_middleware_1.CHECK_DUPLICATE_GITHUB_REPO_LINK], project_controller_1.CREATE_PROJECT_MAINTAINER);
-router.post("/delete-project", [verifyjwt_middleware_1.VERIFY_TOKEN, verifyrole_middleware_1.VERIFY_ROLE_MAINTAINER], project_controller_1.DELETE_PROJECT_BY_ID);
 router.post("/get-project-by-id", [verifyjwt_middleware_1.VERIFY_TOKEN], project_controller_1.GET_PROJECT_BY_ID);
 router.post("/get-projects", [verifyjwt_middleware_1.VERIFY_TOKEN], project_controller_1.GET_PROJECTS);
 router.post("/get-published-projects", [verifyjwt_middleware_1.VERIFY_TOKEN, verifyrole_middleware_1.VERIFY_ROLE_MAINTAINER], project_controller_1.GET_PUBLISHED_PROJECTS);

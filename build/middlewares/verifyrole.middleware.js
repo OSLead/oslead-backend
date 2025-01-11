@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VERIFY_ROLE_CONTRIBUTOR = exports.VERIFY_ROLE_MAINTAINER = void 0;
+exports.VERIFY_ROLE_ADMIN = exports.VERIFY_ROLE_CONTRIBUTOR = exports.VERIFY_ROLE_MAINTAINER = void 0;
 const models_1 = __importDefault(require("../models"));
 const contributor_model_1 = require("../models/contributor.model");
 const maintainer_model_1 = require("../models/maintainer.model");
 const response_messages_1 = require("../utils/response_messages");
+const admin_model_1 = require("../models/admin.model");
 const Role = models_1.default.roles;
 const selectChoice = ["roles", "_id", "name", "username", "email", "github_id"];
 const VERIFY_ROLE_CONTRIBUTOR = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -57,3 +58,23 @@ const VERIFY_ROLE_MAINTAINER = (req, res, next) => __awaiter(void 0, void 0, voi
     }
 });
 exports.VERIFY_ROLE_MAINTAINER = VERIFY_ROLE_MAINTAINER;
+const VERIFY_ROLE_ADMIN = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield admin_model_1.Admin.findById(res.locals.userId).select(["roles", "_id", "username"]);
+        console.log(user);
+        const roles = yield Role.find({ _id: { $in: user === null || user === void 0 ? void 0 : user.roles } });
+        const isAdminExist = roles.find((role) => role.name === "admin");
+        if (isAdminExist) {
+            res.locals.userDetails = user;
+            next();
+        }
+        else
+            return res
+                .status(401)
+                .send({ message: response_messages_1.ERRORS_MESSAGE.ERROR_NOT_ADMIN });
+    }
+    catch (error) {
+        return res.status(500).send({ message: response_messages_1.ERRORS_MESSAGE.ERROR_500 });
+    }
+});
+exports.VERIFY_ROLE_ADMIN = VERIFY_ROLE_ADMIN;
