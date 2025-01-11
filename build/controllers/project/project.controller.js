@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GET_LEADERBOARD = exports.EVALUATE_PULL_REQUEST = exports.GET_ENROLLED_PROJECTS = exports.ENROLL_PROJECT = exports.GET_PUBLISHED_PROJECTS = exports.GET_PROJECTS = exports.GET_PROJECT_BY_ID = exports.DELETE_PROJECT_BY_ID = exports.CREATE_PROJECT_MAINTAINER = void 0;
+exports.GET_LEADERBOARD = exports.EVALUATE_PULL_REQUEST = exports.GET_ENROLLED_PROJECTS = exports.ENROLL_PROJECT = exports.GET_PUBLISHED_PROJECTS = exports.GET_PROJECTS = exports.GET_PROJECT_BY_ID = exports.CREATE_PROJECT_MAINTAINER = void 0;
 const projects_model_1 = require("../../models/projects.model");
 const response_messages_1 = require("../../utils/response_messages");
 const contributor_model_1 = require("../../models/contributor.model");
@@ -36,27 +36,6 @@ const CREATE_PROJECT_MAINTAINER = (req, res) => __awaiter(void 0, void 0, void 0
     }
 });
 exports.CREATE_PROJECT_MAINTAINER = CREATE_PROJECT_MAINTAINER;
-const DELETE_PROJECT_BY_ID = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const projectId = req.body.id;
-        const deleteProject = yield projects_model_1.Project.findOne({
-            _id: projectId,
-            "ownedBy.github_id": res.locals.userDetails.github_id,
-        }).select("-projectDetails");
-        if (!deleteProject) {
-            return res
-                .status(404)
-                .send({ message: response_messages_1.ERRORS_MESSAGE.REPOSITORY_NOT_FOUND });
-        }
-        yield deleteProject.deleteOne();
-        return res.status(200).send({ message: response_messages_1.SUCCESS_MESSAGE.PROJECT_DELETED });
-    }
-    catch (error) {
-        console.log(error);
-        res.status(500).send({ message: response_messages_1.ERRORS_MESSAGE.ERROR_500 });
-    }
-});
-exports.DELETE_PROJECT_BY_ID = DELETE_PROJECT_BY_ID;
 const GET_PROJECTS = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const selectChoice = [
@@ -116,7 +95,7 @@ const ENROLL_PROJECT = (req, res) => __awaiter(void 0, void 0, void 0, function*
         if (!user) {
             return res.status(400).json({ message: response_messages_1.ERRORS_MESSAGE.ERROR_400 });
         }
-        if (user.enrolledProjects && user.enrolledProjects.length >= 3) {
+        if (user.enrolledProjects && user.enrolledProjects.length >= 6) {
             return res.status(400).json({ message: response_messages_1.ERRORS_MESSAGE.MAX_PROJECTS });
         }
         const isEnrolledProject = user.enrolledProjects.find((project) => project.projectId === projectId);
@@ -314,7 +293,7 @@ function extractGitHubInfo(url) {
 }
 var DifficultyPoints;
 (function (DifficultyPoints) {
-    DifficultyPoints[DifficultyPoints["EASY"] = 20] = "EASY";
-    DifficultyPoints[DifficultyPoints["MEDIUM"] = 30] = "MEDIUM";
-    DifficultyPoints[DifficultyPoints["HARD"] = 40] = "HARD";
+    DifficultyPoints[DifficultyPoints["EASY"] = 25] = "EASY";
+    DifficultyPoints[DifficultyPoints["MEDIUM"] = 50] = "MEDIUM";
+    DifficultyPoints[DifficultyPoints["HARD"] = 75] = "HARD";
 })(DifficultyPoints || (DifficultyPoints = {}));

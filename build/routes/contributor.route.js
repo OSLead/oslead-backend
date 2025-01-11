@@ -45,6 +45,5 @@ router.get("/callback", passport_1.default.authenticate("github", { failureRedir
     });
 });
 router.post("/details-own", [verifyjwt_middleware_1.VERIFY_TOKEN, verifyrole_middleware_1.VERIFY_ROLE_CONTRIBUTOR], contributor_controller_1.getContributorSelf);
-router.post("/dashboard-profile", [verifyjwt_middleware_1.VERIFY_TOKEN, verifyrole_middleware_1.VERIFY_ROLE_CONTRIBUTOR], contributor_controller_1.getDashBoardProfile);
 router.post("/register", [verifyjwt_middleware_1.VERIFY_TOKEN, datavalidation_middleware_1.VALIDATE_REGISTER, verifyrole_middleware_1.VERIFY_ROLE_CONTRIBUTOR], register_controller_1.USER_REGISTER);
 exports.default = router;

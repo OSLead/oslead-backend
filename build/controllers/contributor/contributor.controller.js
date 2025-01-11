@@ -9,10 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDashBoardProfile = exports.getContributorSelf = void 0;
+exports.getContributorSelf = void 0;
 const contributor_model_1 = require("../../models/contributor.model");
 const response_messages_1 = require("../../utils/response_messages");
-const evaluation_model_1 = require("../../models/evaluation.model");
 const getContributorSelf = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = res.locals.userId;
     try {
@@ -29,30 +28,3 @@ const getContributorSelf = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.getContributorSelf = getContributorSelf;
-const getDashBoardProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userId = res.locals.userId;
-    try {
-        const userDetails = yield contributor_model_1.User.findOne({ _id: userId });
-        if (!userDetails) {
-            res.status(404).send({ message: response_messages_1.ERRORS_MESSAGE.ERROR_404 });
-            return;
-        }
-        const evalDetails = yield evaluation_model_1.EvaluationStorage.findOne({
-            github_id: userDetails.github_id,
-        });
-        let rank = 0;
-        if (evalDetails) {
-            rank = yield evaluation_model_1.EvaluationStorage.countDocuments({
-                totalPoints: { $gt: evalDetails === null || evalDetails === void 0 ? void 0 : evalDetails.totalPoints },
-            });
-        }
-        res
-            .status(200)
-            .send({ userDetails, evalDetails, rank: evalDetails && rank + 1 });
-    }
-    catch (error) {
-        console.error(error);
-        res.status(500).send({ message: response_messages_1.ERRORS_MESSAGE.ERROR_500 });
-    }
-});
-exports.getDashBoardProfile = getDashBoardProfile;
