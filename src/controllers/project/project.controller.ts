@@ -1,4 +1,4 @@
-import { Response, Request } from "express";
+ import { Response, Request } from "express";
 import { Project } from "../../models/projects.model";
 import { ERRORS_MESSAGE, SUCCESS_MESSAGE } from "../../utils/response_messages";
 import { User } from "../../models/contributor.model";
@@ -89,7 +89,7 @@ const ENROLL_PROJECT = async (req: Request, res: Response) => {
       return res.status(400).json({ message: ERRORS_MESSAGE.ERROR_400 });
     }
 
-    if (user.enrolledProjects && user.enrolledProjects.length >= 3) {
+    if (user.enrolledProjects && user.enrolledProjects.length >= 6) {
       // max 3 projects
       return res.status(400).json({ message: ERRORS_MESSAGE.MAX_PROJECTS });
     }
