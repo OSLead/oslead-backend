@@ -57,7 +57,7 @@ router.post(
   GET_MAINTAINER_PERSONAL_DETAILS
 );
 
-router.get(
+router.post(
   "/get-all-maintainers",
   [VERIFY_TOKEN, VERIFY_ROLE_ADMIN],
   GET_ALL_MAINTAINERS

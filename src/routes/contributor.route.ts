@@ -57,6 +57,6 @@ router.post(
   USER_REGISTER
 );
 
-router.get("/get-all-contributors",[VERIFY_TOKEN,VERIFY_ROLE_ADMIN],getAllContributors)
+router.post("/get-all-contributors",[VERIFY_TOKEN,VERIFY_ROLE_ADMIN],getAllContributors)
 
 export default router;
