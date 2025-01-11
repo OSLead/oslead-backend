@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import { VERIFY_TOKEN } from "../middlewares/verifyjwt.middleware";
-import { VERIFY_ROLE_CONTRIBUTOR } from "../middlewares/verifyrole.middleware";
-import { getContributorSelf } from "../controllers/contributor/contributor.controller";
+import { VERIFY_ROLE_ADMIN, VERIFY_ROLE_CONTRIBUTOR } from "../middlewares/verifyrole.middleware";
+import { getAllContributors, getContributorSelf } from "../controllers/contributor/contributor.controller";
 import { USER_REGISTER } from "../controllers/contributor/register.controller";
 import { VALIDATE_REGISTER } from "../middlewares/datavalidation.middleware";
 import passport from "passport";
@@ -56,5 +56,7 @@ router.post(
   [VERIFY_TOKEN, VALIDATE_REGISTER, VERIFY_ROLE_CONTRIBUTOR],
   USER_REGISTER
 );
+
+router.get("/get-all-contributors",[VERIFY_TOKEN,VERIFY_ROLE_ADMIN],getAllContributors)
 
 export default router;
