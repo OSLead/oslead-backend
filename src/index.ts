@@ -47,6 +47,9 @@ import userRegisterRoutes from "./routes/register.route";
 import projectRoutes from "./routes/project.route";
 import contributorRoutes from "./routes/contributor.route";
 import pingRoutes from "./routes/ping.route";
+import adminRoutes from "./routes/admin.route";
+
+
 
 // old routes (will remove in prod)
 app.use("/api/auth", authRoutes);
@@ -59,6 +62,7 @@ app.use("/", pingRoutes);
 app.use("/api/maintainer", maintainerRoutes);
 app.use("/api/contributor", contributorRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/admin", adminRoutes)
 
 const createRoles = async () => {
   try {
@@ -72,13 +76,21 @@ const createRoles = async () => {
         name: "maintainer",
       });
 
+      const adminRole = new Role({
+        name: "admin",
+      });
+     
+
       console.log("Creating ROLES...");
 
       await contributorRole.save();
       await maintainerRole.save();
-
+      await adminRole.save();
+      
       console.log("ROLES created successfully ✅");
     } else {
+      
+
       console.log("ROLES already created ✅");
     }
   } catch (error) {
