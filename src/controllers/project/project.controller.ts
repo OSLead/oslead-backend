@@ -1,10 +1,15 @@
- import { Response, Request } from "express";
+import { Response, Request } from "express";
 import { Project } from "../../models/projects.model";
 import { ERRORS_MESSAGE, SUCCESS_MESSAGE } from "../../utils/response_messages";
 import { User } from "../../models/contributor.model";
-import { GET_PULL_REQUEST_DETAILS } from "../../utils/githubAPIs";
+import {
+  GET_PULL_REQUEST_DETAILS,
+  GET_REPO_DETAILS,
+  GET_REPO_NAME_BY_URL,
+} from "../../utils/githubAPIs";
 import { EvaluatedStorage } from "../../models/evaluatedpulls.model";
 import { EvaluationStorage } from "../../models/evaluation.model";
+import { Maintainer } from "../../models/maintainer.model";
 
 const CREATE_PROJECT_MAINTAINER = async (req: Request, res: Response) => {
   try {
@@ -14,6 +19,60 @@ const CREATE_PROJECT_MAINTAINER = async (req: Request, res: Response) => {
         userId: res.locals.userDetails._id,
         github_id: res.locals.userDetails.github_id,
       },
+    });
+
+    const doc = await newProject.save();
+    res
+      .status(200)
+      .send({ message: SUCCESS_MESSAGE.PROJECT_CREATED_SUCCESS, doc });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: ERRORS_MESSAGE.ERROR_500 });
+  }
+};
+
+const CREATE_PROJECT_ADMIN = async (req: Request, res: Response) => {
+  try {
+    const { github_repo_link, assignedProjectAdmin } = req.body;
+
+    const extractGithubDetails = (url: string) => {
+      const match = url.match(/github\.com\/([^/]+)\/([^/]+)/);
+      if (!match) throw new Error("Invalid GitHub repository link.");
+      return { owner: match[1], repoName: match[2] };
+    };
+
+    const { owner, repoName } = extractGithubDetails(github_repo_link);
+    const assignedProjectAdminDetails =
+      assignedProjectAdmin !== "self"
+        ? await Maintainer.findOne({ username: assignedProjectAdmin }) 
+        : await Maintainer.findOne({ username: "OSLead" });
+
+    if (!assignedProjectAdminDetails) {
+      throw new Error(
+        `No maintainer found with username matching the repository owner: ${owner}`
+      );
+    }
+
+    const userRepoDetails = await GET_REPO_DETAILS(owner, repoName);
+
+    const alreadyProject = await Project.findOne({
+      "projectDetails.id": userRepoDetails.id,
+    }).select("projectDetails.id");
+
+    if (alreadyProject) {
+      return res
+        .status(400)
+        .send({ message: ERRORS_MESSAGE.DUPLICATE_GITHUB_REPO_LINK });
+    }
+    // console.log(userRepoDetails);
+    // console.log(assignedProjectAdminDetails);
+    const newProject = new Project({
+      projectDetails: userRepoDetails,
+      ownedBy: {
+        userId: assignedProjectAdminDetails?._id,
+        github_id: assignedProjectAdminDetails?.github_id,
+      },
+      
     });
 
     const doc = await newProject.save();
@@ -347,13 +406,14 @@ function extractGitHubInfo(url: string) {
 }
 
 enum DifficultyPoints {
-  "EASY" = 25,
-  "MEDIUM" = 50,
-  "HARD" = 75,
+  "EASY" = 20,
+  "MEDIUM" = 30,
+  "HARD" = 40,
 }
 
 export {
   CREATE_PROJECT_MAINTAINER,
+  CREATE_PROJECT_ADMIN,
   GET_PROJECT_BY_ID,
   GET_PROJECTS,
   GET_PUBLISHED_PROJECTS,

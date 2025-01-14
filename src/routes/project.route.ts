@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  CREATE_PROJECT_ADMIN,
   CREATE_PROJECT_MAINTAINER,
   ENROLL_PROJECT,
   EVALUATE_PULL_REQUEST,
@@ -11,6 +12,7 @@ import {
 } from "../controllers/project/project.controller";
 import { VERIFY_TOKEN } from "../middlewares/verifyjwt.middleware";
 import {
+  VERIFY_ROLE_ADMIN,
   VERIFY_ROLE_CONTRIBUTOR,
   VERIFY_ROLE_MAINTAINER,
 } from "../middlewares/verifyrole.middleware";
@@ -22,6 +24,11 @@ router.post(
   [VERIFY_TOKEN, VERIFY_ROLE_MAINTAINER, CHECK_DUPLICATE_GITHUB_REPO_LINK],
   CREATE_PROJECT_MAINTAINER
 );
+
+router.post(
+  "/create-project-by-admin",[VERIFY_TOKEN,VERIFY_ROLE_ADMIN],
+  CREATE_PROJECT_ADMIN
+)
 
 router.post("/get-project-by-id", [VERIFY_TOKEN], GET_PROJECT_BY_ID);
 

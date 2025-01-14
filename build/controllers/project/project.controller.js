@@ -9,13 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GET_LEADERBOARD = exports.EVALUATE_PULL_REQUEST = exports.GET_ENROLLED_PROJECTS = exports.ENROLL_PROJECT = exports.GET_PUBLISHED_PROJECTS = exports.GET_PROJECTS = exports.GET_PROJECT_BY_ID = exports.CREATE_PROJECT_MAINTAINER = void 0;
+exports.GET_LEADERBOARD = exports.EVALUATE_PULL_REQUEST = exports.GET_ENROLLED_PROJECTS = exports.ENROLL_PROJECT = exports.GET_PUBLISHED_PROJECTS = exports.GET_PROJECTS = exports.GET_PROJECT_BY_ID = exports.CREATE_PROJECT_ADMIN = exports.CREATE_PROJECT_MAINTAINER = void 0;
 const projects_model_1 = require("../../models/projects.model");
 const response_messages_1 = require("../../utils/response_messages");
 const contributor_model_1 = require("../../models/contributor.model");
 const githubAPIs_1 = require("../../utils/githubAPIs");
 const evaluatedpulls_model_1 = require("../../models/evaluatedpulls.model");
 const evaluation_model_1 = require("../../models/evaluation.model");
+const maintainer_model_1 = require("../../models/maintainer.model");
 const CREATE_PROJECT_MAINTAINER = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newProject = new projects_model_1.Project({
@@ -36,6 +37,49 @@ const CREATE_PROJECT_MAINTAINER = (req, res) => __awaiter(void 0, void 0, void 0
     }
 });
 exports.CREATE_PROJECT_MAINTAINER = CREATE_PROJECT_MAINTAINER;
+const CREATE_PROJECT_ADMIN = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { github_repo_link, assignedProjectAdmin } = req.body;
+        const extractGithubDetails = (url) => {
+            const match = url.match(/github\.com\/([^/]+)\/([^/]+)/);
+            if (!match)
+                throw new Error("Invalid GitHub repository link.");
+            return { owner: match[1], repoName: match[2] };
+        };
+        const { owner, repoName } = extractGithubDetails(github_repo_link);
+        const assignedProjectAdminDetails = assignedProjectAdmin !== "self"
+            ? yield maintainer_model_1.Maintainer.findOne({ username: assignedProjectAdmin })
+            : yield maintainer_model_1.Maintainer.findOne({ username: "OSLead" });
+        if (!assignedProjectAdminDetails) {
+            throw new Error(`No maintainer found with username matching the repository owner: ${owner}`);
+        }
+        const userRepoDetails = yield (0, githubAPIs_1.GET_REPO_DETAILS)(owner, repoName);
+        const alreadyProject = yield projects_model_1.Project.findOne({
+            "projectDetails.id": userRepoDetails.id,
+        }).select("projectDetails.id");
+        if (alreadyProject) {
+            return res
+                .status(400)
+                .send({ message: response_messages_1.ERRORS_MESSAGE.DUPLICATE_GITHUB_REPO_LINK });
+        }
+        const newProject = new projects_model_1.Project({
+            projectDetails: userRepoDetails,
+            ownedBy: {
+                userId: assignedProjectAdminDetails === null || assignedProjectAdminDetails === void 0 ? void 0 : assignedProjectAdminDetails._id,
+                github_id: assignedProjectAdminDetails === null || assignedProjectAdminDetails === void 0 ? void 0 : assignedProjectAdminDetails.github_id,
+            },
+        });
+        const doc = yield newProject.save();
+        res
+            .status(200)
+            .send({ message: response_messages_1.SUCCESS_MESSAGE.PROJECT_CREATED_SUCCESS, doc });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send({ message: response_messages_1.ERRORS_MESSAGE.ERROR_500 });
+    }
+});
+exports.CREATE_PROJECT_ADMIN = CREATE_PROJECT_ADMIN;
 const GET_PROJECTS = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const selectChoice = [
@@ -293,7 +337,7 @@ function extractGitHubInfo(url) {
 }
 var DifficultyPoints;
 (function (DifficultyPoints) {
-    DifficultyPoints[DifficultyPoints["EASY"] = 25] = "EASY";
-    DifficultyPoints[DifficultyPoints["MEDIUM"] = 50] = "MEDIUM";
-    DifficultyPoints[DifficultyPoints["HARD"] = 75] = "HARD";
+    DifficultyPoints[DifficultyPoints["EASY"] = 20] = "EASY";
+    DifficultyPoints[DifficultyPoints["MEDIUM"] = 30] = "MEDIUM";
+    DifficultyPoints[DifficultyPoints["HARD"] = 40] = "HARD";
 })(DifficultyPoints || (DifficultyPoints = {}));

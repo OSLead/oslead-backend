@@ -3,9 +3,9 @@ import { createAccount_PROJECTOWNER } from "../controllers/auth/auth.controller"
 import passport from "passport";
 import { VERIFY_TOKEN } from "../middlewares/verifyjwt.middleware";
 import { VALIDATE_REGISTER } from "../middlewares/datavalidation.middleware";
-import { VERIFY_ROLE_MAINTAINER } from "../middlewares/verifyrole.middleware";
+import { VERIFY_ROLE_ADMIN, VERIFY_ROLE_MAINTAINER } from "../middlewares/verifyrole.middleware";
 import { MAINTAINER_REGISTER } from "../controllers/maintainer/register.controller";
-import { GET_MAINTAINER_PERSONAL_DETAILS } from "../controllers/maintainer/maintainer.controller";
+import { GET_ALL_MAINTAINERS, GET_MAINTAINER_PERSONAL_DETAILS } from "../controllers/maintainer/maintainer.controller";
 const router = express.Router();
 var GitHubStrategy = require("passport-github2").Strategy;
 
@@ -55,6 +55,12 @@ router.post(
   "/profile-details",
   [VERIFY_TOKEN, VERIFY_ROLE_MAINTAINER],
   GET_MAINTAINER_PERSONAL_DETAILS
+);
+
+router.post(
+  "/get-all-maintainers",
+  [VERIFY_TOKEN, VERIFY_ROLE_ADMIN],
+  GET_ALL_MAINTAINERS
 );
 
 export default router;

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GET_MAINTAINER_PERSONAL_DETAILS = void 0;
+exports.GET_ALL_MAINTAINERS = exports.GET_MAINTAINER_PERSONAL_DETAILS = void 0;
 const response_messages_1 = require("../../utils/response_messages");
 const maintainer_model_1 = require("../../models/maintainer.model");
 const GET_MAINTAINER_PERSONAL_DETAILS = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -28,3 +28,29 @@ const GET_MAINTAINER_PERSONAL_DETAILS = (req, res) => __awaiter(void 0, void 0, 
     }
 });
 exports.GET_MAINTAINER_PERSONAL_DETAILS = GET_MAINTAINER_PERSONAL_DETAILS;
+const GET_ALL_MAINTAINERS = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+        const maintainers = yield maintainer_model_1.Maintainer.find()
+            .skip(skip)
+            .limit(limit);
+        const totalMaintainers = yield maintainer_model_1.Maintainer.countDocuments();
+        if (!maintainers.length) {
+            res.status(404).send({ message: "No contributors found" });
+            return;
+        }
+        res.status(200).send({
+            total: totalMaintainers,
+            page,
+            limit,
+            maintainers,
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send({ message: response_messages_1.ERRORS_MESSAGE.ERROR_500 });
+    }
+});
+exports.GET_ALL_MAINTAINERS = GET_ALL_MAINTAINERS;

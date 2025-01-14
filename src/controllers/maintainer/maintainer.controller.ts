@@ -18,4 +18,34 @@ const GET_MAINTAINER_PERSONAL_DETAILS = async (req: Request, res: Response) => {
     res.status(500).send({ message: ERRORS_MESSAGE.ERROR_500 });
   }
 };
-export { GET_MAINTAINER_PERSONAL_DETAILS };
+
+const GET_ALL_MAINTAINERS = async (req: Request, res: Response) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1; 
+    const limit = parseInt(req.query.limit as string) || 10; 
+    const skip = (page - 1) * limit; 
+
+    const maintainers = await Maintainer.find()
+      .skip(skip)
+      .limit(limit);
+
+    const totalMaintainers = await Maintainer.countDocuments();
+
+    if (!maintainers.length) {
+      res.status(404).send({ message: "No contributors found" });
+      return;
+    }
+
+    res.status(200).send({
+      total: totalMaintainers, 
+      page, 
+      limit,
+      maintainers, 
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: ERRORS_MESSAGE.ERROR_500 });
+  }
+};
+
+export { GET_MAINTAINER_PERSONAL_DETAILS,GET_ALL_MAINTAINERS };
