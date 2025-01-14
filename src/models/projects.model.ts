@@ -8,6 +8,8 @@ interface IProject {
     userId: String;
     github_id: String;
   };
+ 
+
 }
 
 type Contributor = {
@@ -18,9 +20,9 @@ type Contributor = {
 };
 
 enum Points {
-  HARD = 100,
-  MEDIUM = 60,
-  EASY = 40,
+  HARD = 40,
+  MEDIUM = 30,
+  EASY = 20,
 }
 
 type PointsDistributeHistory = {
@@ -42,6 +44,7 @@ interface ProjectDoc extends mongoose.Document {
     userId: String;
     github_id: String;
   };
+ 
 }
 
 const projectSchema = new mongoose.Schema({
@@ -53,6 +56,8 @@ const projectSchema = new mongoose.Schema({
     userId: { type: String, required: true },
     github_id: { type: String, required: true },
   },
+ 
+
   applied_contributors: [
     {
       name: { type: String },
