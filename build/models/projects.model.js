@@ -7,9 +7,9 @@ exports.Project = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 var Points;
 (function (Points) {
-    Points[Points["HARD"] = 100] = "HARD";
-    Points[Points["MEDIUM"] = 60] = "MEDIUM";
-    Points[Points["EASY"] = 40] = "EASY";
+    Points[Points["HARD"] = 40] = "HARD";
+    Points[Points["MEDIUM"] = 30] = "MEDIUM";
+    Points[Points["EASY"] = 20] = "EASY";
 })(Points || (Points = {}));
 const projectSchema = new mongoose_1.default.Schema({
     projectDetails: {
