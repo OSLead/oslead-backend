@@ -57,12 +57,7 @@ router.post(
   USER_REGISTER
 );
 
-<<<<<<< HEAD
-
-router.get("/get-all-contributors",[VERIFY_TOKEN,VERIFY_ROLE_ADMIN],getAllContributors)
-=======
 router.post("/get-all-contributors",[VERIFY_TOKEN,VERIFY_ROLE_ADMIN],getAllContributors)
->>>>>>> main
 
 router.delete(
   "/delete-enrolled-project/:contributorId/:projectId",

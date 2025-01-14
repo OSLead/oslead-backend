@@ -46,10 +46,6 @@ router.get("/callback", passport_1.default.authenticate("github", { failureRedir
 });
 router.post("/details-own", [verifyjwt_middleware_1.VERIFY_TOKEN, verifyrole_middleware_1.VERIFY_ROLE_CONTRIBUTOR], contributor_controller_1.getContributorSelf);
 router.post("/register", [verifyjwt_middleware_1.VERIFY_TOKEN, datavalidation_middleware_1.VALIDATE_REGISTER, verifyrole_middleware_1.VERIFY_ROLE_CONTRIBUTOR], register_controller_1.USER_REGISTER);
-<<<<<<< HEAD
 router.get("/get-all-contributors", [verifyjwt_middleware_1.VERIFY_TOKEN, verifyrole_middleware_1.VERIFY_ROLE_ADMIN], contributor_controller_1.getAllContributors);
 router.delete("/delete-enrolled-project/:contributorId/:projectId", [verifyjwt_middleware_1.VERIFY_TOKEN, verifyrole_middleware_1.VERIFY_ROLE_ADMIN], contributor_controller_1.DELETE_PROJECT_SELECTED_BY_CONTRIBUTOR);
-=======
-router.post("/get-all-contributors", [verifyjwt_middleware_1.VERIFY_TOKEN, verifyrole_middleware_1.VERIFY_ROLE_ADMIN], contributor_controller_1.getAllContributors);
->>>>>>> main
 exports.default = router;
