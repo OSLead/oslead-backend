@@ -47,4 +47,5 @@ router.get("/callback", passport_1.default.authenticate("github", { failureRedir
 router.post("/register", [verifyjwt_middleware_1.VERIFY_TOKEN, datavalidation_middleware_1.VALIDATE_REGISTER, verifyrole_middleware_1.VERIFY_ROLE_MAINTAINER], register_controller_1.MAINTAINER_REGISTER);
 router.post("/profile-details", [verifyjwt_middleware_1.VERIFY_TOKEN, verifyrole_middleware_1.VERIFY_ROLE_MAINTAINER], maintainer_controller_1.GET_MAINTAINER_PERSONAL_DETAILS);
 router.post("/get-all-maintainers", [verifyjwt_middleware_1.VERIFY_TOKEN, verifyrole_middleware_1.VERIFY_ROLE_ADMIN], maintainer_controller_1.GET_ALL_MAINTAINERS);
+router.post("/ban-maintainer/:maintainerId", [verifyjwt_middleware_1.VERIFY_TOKEN, verifyrole_middleware_1.VERIFY_ROLE_ADMIN], maintainer_controller_1.BAN_MAINTAINER);
 exports.default = router;

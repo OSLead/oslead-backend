@@ -9,6 +9,7 @@ interface IMaintainer {
   userId: string;
   college_name: string;
   contact_number: string;
+  isBanned: boolean;
   delivery_details: {
     city: string;
     state: string;
@@ -34,6 +35,7 @@ interface MaintainerDoc extends mongoose.Document {
   userId: string;
   college_name: string;
   contact_number: string;
+  isBanned: boolean;
   delivery_details: {
     city: string;
     state: string;
@@ -71,6 +73,10 @@ const MaintainerSchema = new mongoose.Schema({
   },
   contact_number: {
     type: String,
+  },
+  isBanned: {
+    type: Boolean,
+    default: false,
   },
   delivery_details: {
     city: {

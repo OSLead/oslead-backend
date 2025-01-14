@@ -48,4 +48,29 @@ const GET_ALL_MAINTAINERS = async (req: Request, res: Response) => {
   }
 };
 
-export { GET_MAINTAINER_PERSONAL_DETAILS,GET_ALL_MAINTAINERS };
+const BAN_MAINTAINER = async (req: Request, res: Response) => {
+  try {
+    const { maintainerId } = req.params;
+    const maintainer = await Maintainer.findById(maintainerId);
+
+    if (!maintainer) {
+      return res.status(404).send({ message: "Maintainer not found" });
+    }
+
+    // Toggle the isBanned status
+    maintainer.isBanned = !maintainer.isBanned;
+    await maintainer.save();
+
+    const action = maintainer.isBanned ? "banned" : "unbanned";
+
+    res.status(200).send({
+      message: `Maintainer has been successfully ${action}`,
+      maintainer,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: ERRORS_MESSAGE.ERROR_500 });
+  }
+}
+
+export { GET_MAINTAINER_PERSONAL_DETAILS,GET_ALL_MAINTAINERS,BAN_MAINTAINER };

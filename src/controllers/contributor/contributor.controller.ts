@@ -81,4 +81,29 @@ const DELETE_PROJECT_SELECTED_BY_CONTRIBUTOR = async (req: Request, res: Respons
   }
 }
 
-export { getContributorSelf, getAllContributors,DELETE_PROJECT_SELECTED_BY_CONTRIBUTOR };
+const BAN_CONTRIBUTOR = async (req: Request, res: Response) => {
+  try {
+    const { contributorId } = req.params;
+    const contributor = await Contributor.findById(contributorId);
+
+    if (!contributor) {
+      return res.status(404).send({ message: "Maintainer not found" });
+    }
+
+    // Toggle the isBanned status
+    contributor.isBanned = !contributor.isBanned;
+    await contributor.save();
+
+    const action = contributor.isBanned ? "banned" : "unbanned";
+
+    res.status(200).send({
+      message: `Contributor has been successfully ${action}`,
+      contributor,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: ERRORS_MESSAGE.ERROR_500 });
+  }
+}
+
+export { getContributorSelf, getAllContributors,DELETE_PROJECT_SELECTED_BY_CONTRIBUTOR ,BAN_CONTRIBUTOR};

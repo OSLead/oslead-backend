@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GET_ALL_MAINTAINERS = exports.GET_MAINTAINER_PERSONAL_DETAILS = void 0;
+exports.BAN_MAINTAINER = exports.GET_ALL_MAINTAINERS = exports.GET_MAINTAINER_PERSONAL_DETAILS = void 0;
 const response_messages_1 = require("../../utils/response_messages");
 const maintainer_model_1 = require("../../models/maintainer.model");
 const GET_MAINTAINER_PERSONAL_DETAILS = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -54,3 +54,24 @@ const GET_ALL_MAINTAINERS = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.GET_ALL_MAINTAINERS = GET_ALL_MAINTAINERS;
+const BAN_MAINTAINER = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { maintainerId } = req.params;
+        const maintainer = yield maintainer_model_1.Maintainer.findById(maintainerId);
+        if (!maintainer) {
+            return res.status(404).send({ message: "Maintainer not found" });
+        }
+        maintainer.isBanned = !maintainer.isBanned;
+        yield maintainer.save();
+        const action = maintainer.isBanned ? "banned" : "unbanned";
+        res.status(200).send({
+            message: `Maintainer has been successfully ${action}`,
+            maintainer,
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send({ message: response_messages_1.ERRORS_MESSAGE.ERROR_500 });
+    }
+});
+exports.BAN_MAINTAINER = BAN_MAINTAINER;
