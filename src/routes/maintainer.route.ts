@@ -5,7 +5,7 @@ import { VERIFY_TOKEN } from "../middlewares/verifyjwt.middleware";
 import { VALIDATE_REGISTER } from "../middlewares/datavalidation.middleware";
 import { VERIFY_ROLE_ADMIN, VERIFY_ROLE_MAINTAINER } from "../middlewares/verifyrole.middleware";
 import { MAINTAINER_REGISTER } from "../controllers/maintainer/register.controller";
-import { GET_ALL_MAINTAINERS, GET_MAINTAINER_PERSONAL_DETAILS } from "../controllers/maintainer/maintainer.controller";
+import { BAN_MAINTAINER, GET_ALL_MAINTAINERS, GET_MAINTAINER_PERSONAL_DETAILS } from "../controllers/maintainer/maintainer.controller";
 const router = express.Router();
 var GitHubStrategy = require("passport-github2").Strategy;
 
@@ -62,5 +62,7 @@ router.post(
   [VERIFY_TOKEN, VERIFY_ROLE_ADMIN],
   GET_ALL_MAINTAINERS
 );
+
+router.post("/ban-maintainer/:maintainerId",[VERIFY_TOKEN,VERIFY_ROLE_ADMIN],BAN_MAINTAINER)
 
 export default router;

@@ -31,6 +31,10 @@ const MaintainerSchema = new mongoose_1.default.Schema({
     contact_number: {
         type: String,
     },
+    isBanned: {
+        type: Boolean,
+        default: false,
+    },
     delivery_details: {
         city: {
             type: String,

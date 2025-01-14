@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DELETE_PROJECT_SELECTED_BY_CONTRIBUTOR = exports.getAllContributors = exports.getContributorSelf = void 0;
+exports.BAN_CONTRIBUTOR = exports.DELETE_PROJECT_SELECTED_BY_CONTRIBUTOR = exports.getAllContributors = exports.getContributorSelf = void 0;
 const contributor_model_1 = require("../../models/contributor.model");
 const response_messages_1 = require("../../utils/response_messages");
 const getContributorSelf = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -77,3 +77,24 @@ const DELETE_PROJECT_SELECTED_BY_CONTRIBUTOR = (req, res) => __awaiter(void 0, v
     }
 });
 exports.DELETE_PROJECT_SELECTED_BY_CONTRIBUTOR = DELETE_PROJECT_SELECTED_BY_CONTRIBUTOR;
+const BAN_CONTRIBUTOR = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { contributorId } = req.params;
+        const contributor = yield contributor_model_1.User.findById(contributorId);
+        if (!contributor) {
+            return res.status(404).send({ message: "Maintainer not found" });
+        }
+        contributor.isBanned = !contributor.isBanned;
+        yield contributor.save();
+        const action = contributor.isBanned ? "banned" : "unbanned";
+        res.status(200).send({
+            message: `Contributor has been successfully ${action}`,
+            contributor,
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send({ message: response_messages_1.ERRORS_MESSAGE.ERROR_500 });
+    }
+});
+exports.BAN_CONTRIBUTOR = BAN_CONTRIBUTOR;

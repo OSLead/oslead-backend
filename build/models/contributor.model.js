@@ -60,6 +60,10 @@ const userSchema = new mongoose_1.default.Schema({
             ref: "Role",
         },
     ],
+    isBanned: {
+        type: Boolean,
+        default: false,
+    },
     delivery_details: {
         city: {
             type: String,

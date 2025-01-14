@@ -13,6 +13,7 @@ interface IUser {
   profile_picture: string;
   roles: any;
   enrolledProjects: EnrolledProject[];
+  isBanned: boolean;
   delivery_details: {
     city: string;
     state: string;
@@ -47,6 +48,7 @@ interface UserDoc extends mongoose.Document {
   contact_number: string;
   course_stream: string;
   enrolledProjects: EnrolledProject[];
+  isBanned: boolean;
   roles: any;
   delivery_details: {
     city: string;
@@ -114,6 +116,10 @@ const userSchema = new mongoose.Schema({
       ref: "Role",
     },
   ],
+  isBanned: {
+    type: Boolean,
+    default: false,
+  },
   delivery_details: {
     city: {
       type: String,
