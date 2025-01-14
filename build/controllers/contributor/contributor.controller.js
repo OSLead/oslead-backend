@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllContributors = exports.getContributorSelf = void 0;
+exports.DELETE_PROJECT_SELECTED_BY_CONTRIBUTOR = exports.getAllContributors = exports.getContributorSelf = void 0;
 const contributor_model_1 = require("../../models/contributor.model");
 const response_messages_1 = require("../../utils/response_messages");
 const getContributorSelf = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -54,3 +54,26 @@ const getAllContributors = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.getAllContributors = getAllContributors;
+const DELETE_PROJECT_SELECTED_BY_CONTRIBUTOR = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { contributorId, projectId } = req.params;
+        if (!contributorId || !projectId) {
+            return res.status(400).send({ message: "Contributor ID and Project ID are required." });
+        }
+        const updatedContributor = yield contributor_model_1.User.findOneAndUpdate({ _id: contributorId }, { $pull: { enrolledProjects: { projectId } } }, { new: true });
+        if (!updatedContributor) {
+            return res
+                .status(404)
+                .send({ message: "Contributor not found or unauthorized." });
+        }
+        return res.status(200).send({
+            message: "Enrolled project deleted successfully.",
+            updatedContributor,
+        });
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).send({ message: "Internal Server Error." });
+    }
+});
+exports.DELETE_PROJECT_SELECTED_BY_CONTRIBUTOR = DELETE_PROJECT_SELECTED_BY_CONTRIBUTOR;
