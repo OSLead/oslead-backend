@@ -44,7 +44,7 @@ const CREATE_PROJECT_ADMIN = async (req: Request, res: Response) => {
     const { owner, repoName } = extractGithubDetails(github_repo_link);
     const assignedProjectAdminDetails =
       assignedProjectAdmin !== "self"
-        ? await Maintainer.findOne({ username: assignedProjectAdmin }) 
+        ? await Maintainer.findOne({ username: assignedProjectAdmin })
         : await Maintainer.findOne({ username: "OSLead" });
 
     if (!assignedProjectAdminDetails) {
@@ -72,7 +72,6 @@ const CREATE_PROJECT_ADMIN = async (req: Request, res: Response) => {
         userId: assignedProjectAdminDetails?._id,
         github_id: assignedProjectAdminDetails?.github_id,
       },
-      
     });
 
     const doc = await newProject.save();
@@ -88,6 +87,10 @@ const CREATE_PROJECT_ADMIN = async (req: Request, res: Response) => {
 const GET_PROJECTS = async (req: Request, res: Response) => {
   // we need limit and skip for pagination
   try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+
     const selectChoice = [
       "projectDetails.name",
       "projectDetails.html_url",
@@ -96,8 +99,21 @@ const GET_PROJECTS = async (req: Request, res: Response) => {
       "projectDetails.owner.login",
       "projectDetails.owner.avatar_url",
     ];
-    const doc = await Project.find().select(selectChoice);
-    res.status(200).send(doc);
+    
+
+    
+    const doc = await Project.find()
+      .skip(skip)
+      .limit(limit)
+      .select(selectChoice);
+
+      const totalProject = await Project.countDocuments();
+    res.status(200).json({
+      totalProject,
+      page,
+      limit,
+      doc,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: ERRORS_MESSAGE.ERROR_500 });

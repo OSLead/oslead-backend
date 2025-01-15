@@ -21,26 +21,51 @@ const GET_MAINTAINER_PERSONAL_DETAILS = async (req: Request, res: Response) => {
 
 const GET_ALL_MAINTAINERS = async (req: Request, res: Response) => {
   try {
-    const page = parseInt(req.query.page as string) || 1; 
-    const limit = parseInt(req.query.limit as string) || 10; 
-    const skip = (page - 1) * limit; 
+    const fetchAll = req.query.fetch === "all";
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
 
-    const maintainers = await Maintainer.find()
-      .skip(skip)
-      .limit(limit);
+    const selectChoice = [
+      "projectDetails.name",
+      "projectDetails.html_url",
+      "projectDetails.description",
+      "projectDetails.language",
+      "projectDetails.owner.login",
+      "projectDetails.owner.avatar_url",
+    ].join(" ");
 
-    const totalMaintainers = await Maintainer.countDocuments();
+    let maintainers, total;
 
-    if (!maintainers.length) {
+    if (fetchAll) {
+      maintainers = await Maintainer.find({}).populate({
+        path: "projects",
+        select: `${selectChoice}`,
+      });
+
+      total = maintainers.length;
+    } else {
+      maintainers = await Maintainer.find()
+        .skip(skip)
+        .limit(limit)
+        .populate({
+          path: "projects",
+          select: `${selectChoice} `,
+        });
+
+      total = await Maintainer.countDocuments();
+    }
+
+    if (!total) {
       res.status(404).send({ message: "No contributors found" });
       return;
     }
 
     res.status(200).send({
-      total: totalMaintainers, 
-      page, 
+      total,
+      page,
       limit,
-      maintainers, 
+      maintainers,
     });
   } catch (error) {
     console.error(error);
@@ -71,6 +96,6 @@ const BAN_MAINTAINER = async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).send({ message: ERRORS_MESSAGE.ERROR_500 });
   }
-}
+};
 
-export { GET_MAINTAINER_PERSONAL_DETAILS,GET_ALL_MAINTAINERS,BAN_MAINTAINER };
+export { GET_MAINTAINER_PERSONAL_DETAILS, GET_ALL_MAINTAINERS, BAN_MAINTAINER };
