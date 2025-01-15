@@ -46,63 +46,76 @@ interface MaintainerDoc extends mongoose.Document {
     };
   };
   roles: any;
+  projects: any[];
 }
 
-const MaintainerSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  github_id: {
-    type: String,
-    required: true,
-  },
-  username: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-  linked_in: {
-    type: String,
-  },
-  college_name: {
-    type: String,
-  },
-  contact_number: {
-    type: String,
-  },
-  isBanned: {
-    type: Boolean,
-    default: false,
-  },
-  delivery_details: {
-    city: {
+const MaintainerSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    github_id: {
+      type: String,
+      required: true,
+    },
+    username: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    linked_in: {
       type: String,
     },
-    state: {
+    college_name: {
       type: String,
     },
-    pincode: {
+    contact_number: {
       type: String,
     },
-    tshirt: {
-      size: {
+    isBanned: {
+      type: Boolean,
+      default: false,
+    },
+    delivery_details: {
+      city: {
         type: String,
       },
-      color: {
+      state: {
         type: String,
       },
+      pincode: {
+        type: String,
+      },
+      tshirt: {
+        size: {
+          type: String,
+        },
+        color: {
+          type: String,
+        },
+      },
     },
+    roles: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Role",
+      },
+    ],
   },
-  roles: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Role",
-    },
-  ],
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+);
+
+MaintainerSchema.virtual("projects", {
+  ref: "Project", // Name of the referenced model
+  localField: "github_id", // Field in Maintainer schema
+  foreignField: "ownedBy.github_id", // Field in Project schema
 });
 
 MaintainerSchema.statics.build = (attr: IMaintainer) => {

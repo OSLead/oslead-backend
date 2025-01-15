@@ -60,6 +60,14 @@ const MaintainerSchema = new mongoose_1.default.Schema({
             ref: "Role",
         },
     ],
+}, {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+});
+MaintainerSchema.virtual("projects", {
+    ref: "Project",
+    localField: "github_id",
+    foreignField: "ownedBy.github_id",
 });
 MaintainerSchema.statics.build = (attr) => {
     return new Maintainer(attr);

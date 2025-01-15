@@ -30,19 +30,42 @@ const GET_MAINTAINER_PERSONAL_DETAILS = (req, res) => __awaiter(void 0, void 0, 
 exports.GET_MAINTAINER_PERSONAL_DETAILS = GET_MAINTAINER_PERSONAL_DETAILS;
 const GET_ALL_MAINTAINERS = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const fetchAll = req.query.fetch === "all";
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
-        const maintainers = yield maintainer_model_1.Maintainer.find()
-            .skip(skip)
-            .limit(limit);
-        const totalMaintainers = yield maintainer_model_1.Maintainer.countDocuments();
-        if (!maintainers.length) {
+        const selectChoice = [
+            "projectDetails.name",
+            "projectDetails.html_url",
+            "projectDetails.description",
+            "projectDetails.language",
+            "projectDetails.owner.login",
+            "projectDetails.owner.avatar_url",
+        ].join(" ");
+        let maintainers, total;
+        if (fetchAll) {
+            maintainers = yield maintainer_model_1.Maintainer.find({}).populate({
+                path: "projects",
+                select: `${selectChoice}`,
+            });
+            total = maintainers.length;
+        }
+        else {
+            maintainers = yield maintainer_model_1.Maintainer.find()
+                .skip(skip)
+                .limit(limit)
+                .populate({
+                path: "projects",
+                select: `${selectChoice} `,
+            });
+            total = yield maintainer_model_1.Maintainer.countDocuments();
+        }
+        if (!total) {
             res.status(404).send({ message: "No contributors found" });
             return;
         }
         res.status(200).send({
-            total: totalMaintainers,
+            total,
             page,
             limit,
             maintainers,

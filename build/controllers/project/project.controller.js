@@ -82,6 +82,9 @@ const CREATE_PROJECT_ADMIN = (req, res) => __awaiter(void 0, void 0, void 0, fun
 exports.CREATE_PROJECT_ADMIN = CREATE_PROJECT_ADMIN;
 const GET_PROJECTS = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
         const selectChoice = [
             "projectDetails.name",
             "projectDetails.html_url",
@@ -90,8 +93,17 @@ const GET_PROJECTS = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             "projectDetails.owner.login",
             "projectDetails.owner.avatar_url",
         ];
-        const doc = yield projects_model_1.Project.find().select(selectChoice);
-        res.status(200).send(doc);
+        const doc = yield projects_model_1.Project.find()
+            .skip(skip)
+            .limit(limit)
+            .select(selectChoice);
+        const totalProject = yield projects_model_1.Project.countDocuments();
+        res.status(200).json({
+            totalProject,
+            page,
+            limit,
+            doc,
+        });
     }
     catch (error) {
         console.error(error);
