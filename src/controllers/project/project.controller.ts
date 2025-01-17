@@ -64,8 +64,7 @@ const CREATE_PROJECT_ADMIN = async (req: Request, res: Response) => {
         .status(400)
         .send({ message: ERRORS_MESSAGE.DUPLICATE_GITHUB_REPO_LINK });
     }
-    // console.log(userRepoDetails);
-    // console.log(assignedProjectAdminDetails);
+
     const newProject = new Project({
       projectDetails: userRepoDetails,
       ownedBy: {
@@ -85,7 +84,7 @@ const CREATE_PROJECT_ADMIN = async (req: Request, res: Response) => {
 };
 
 const GET_PROJECTS = async (req: Request, res: Response) => {
-  // we need limit and skip for pagination
+  
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
@@ -177,7 +176,7 @@ const ENROLL_PROJECT = async (req: Request, res: Response) => {
       return res.status(400).json({ message: ERRORS_MESSAGE.ALREADY_ENROLLED });
     }
 
-    // If the user is not already enrolled, add them to the applied_contributors field
+    
 
     const updatedProject = await Project.findOne({ _id: projectId }).select(
       "applied_contributors projectDetails"
@@ -189,7 +188,6 @@ const ENROLL_PROJECT = async (req: Request, res: Response) => {
 
     const projectDetails: any = updatedProject.projectDetails;
 
-    // update the user's enrolledProjects field
 
     user.enrolledProjects.push({
       projectId,
@@ -200,7 +198,6 @@ const ENROLL_PROJECT = async (req: Request, res: Response) => {
 
     await user.save();
 
-    // update the project's applied_contributors field
 
     updatedProject.applied_contributors.push({
       userId: localUser._id,
