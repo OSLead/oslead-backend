@@ -12,6 +12,7 @@ var GitHubStrategy = require("passport-github2").Strategy;
 router.get("/", (req: Request, res: Response) => {
   res.status(200).send({ message: "Maintainer route is working fine." });
 });
+
 router.get(
   "/auth/github",
   async function (req: Request, res: Response, next: NextFunction) {
