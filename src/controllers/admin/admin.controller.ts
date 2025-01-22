@@ -2,32 +2,33 @@ import { Request, Response } from "express";
 import { ERRORS_MESSAGE } from "../../utils/response_messages";
 import { EvaluationStorage } from "../../models/evaluation.model";
 
+
 const ASSIGN_POINTS_FOR_EVENTS = async (req: Request, res: Response) => {
   try {
-    const { contributorId } = req.params;
+    const { contributorGithubId } = req.params;
     const { points } = req.body;
 
-    // Validate inputs
     if (!points) {
       return res
         .status(400)
         .json({ message: "Points and description are required." });
     }
-
-    // Fetch the contributor
-    const contributor = await EvaluationStorage.findById(contributorId);
+    
+    
+    const contributor = await EvaluationStorage.findOne({
+      github_id: contributorGithubId,
+    });
     if (!contributor) {
       return res.status(404).json({ message: "Contributor not found." });
     }
 
-    // Update total points and admin-assigned history
+
     contributor.totalPoints += points;
     contributor.adminAssignedPointsHistory.push({
       points,
       date: new Date(),
     });
 
-    // Save the contributor's updated data
     await contributor.save();
 
     res

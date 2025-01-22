@@ -1,9 +1,11 @@
 import { Response, Request } from "express";
 import { ERRORS_MESSAGE } from "../../utils/response_messages";
 import { Maintainer } from "../../models/maintainer.model";
+import { EvaluatedStorage } from "../../models/evaluatedpulls.model";
 
 const GET_MAINTAINER_PERSONAL_DETAILS = async (req: Request, res: Response) => {
   const userId = res.locals.userId;
+
   try {
     const result = await Maintainer.findOne({ _id: userId }).select("-roles");
 
@@ -11,8 +13,14 @@ const GET_MAINTAINER_PERSONAL_DETAILS = async (req: Request, res: Response) => {
       res.status(404).send({ message: ERRORS_MESSAGE.ERROR_404 });
       return;
     }
+    const EvaluatedStorageHistory = await EvaluatedStorage.find({
+      github_id: result.github_id,
+    });
 
-    res.status(200).send(result);
+    const maintainer = result.toObject();
+    res
+      .status(200)
+      .send({ ...maintainer, evalDetails: EvaluatedStorageHistory });
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: ERRORS_MESSAGE.ERROR_500 });

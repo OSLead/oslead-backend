@@ -19,6 +19,6 @@ router.post(
   login_ADMIN
 );
 
-router.patch("/assign-points-for-events/:contributorId",[VERIFY_TOKEN,VERIFY_ROLE_ADMIN],ASSIGN_POINTS_FOR_EVENTS);
+router.patch("/assign-points-for-events/:contributorGithubId",[VERIFY_TOKEN,VERIFY_ROLE_ADMIN],ASSIGN_POINTS_FOR_EVENTS);
 
 export default router;

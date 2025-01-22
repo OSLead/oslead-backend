@@ -52,7 +52,7 @@ router.post(
 );
 
 router.post(
-  "/profile-details",
+  "/dashboard-profile",
   [VERIFY_TOKEN, VERIFY_ROLE_MAINTAINER],
   GET_MAINTAINER_PERSONAL_DETAILS
 );

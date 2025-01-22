@@ -84,7 +84,6 @@ const CREATE_PROJECT_ADMIN = async (req: Request, res: Response) => {
 };
 
 const GET_PROJECTS = async (req: Request, res: Response) => {
-  
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
@@ -98,15 +97,13 @@ const GET_PROJECTS = async (req: Request, res: Response) => {
       "projectDetails.owner.login",
       "projectDetails.owner.avatar_url",
     ];
-    
 
-    
     const doc = await Project.find()
       .skip(skip)
       .limit(limit)
       .select(selectChoice);
 
-      const totalProject = await Project.countDocuments();
+    const totalProject = await Project.countDocuments();
     res.status(200).json({
       totalProject,
       page,
@@ -176,8 +173,6 @@ const ENROLL_PROJECT = async (req: Request, res: Response) => {
       return res.status(400).json({ message: ERRORS_MESSAGE.ALREADY_ENROLLED });
     }
 
-    
-
     const updatedProject = await Project.findOne({ _id: projectId }).select(
       "applied_contributors projectDetails"
     );
@@ -188,7 +183,6 @@ const ENROLL_PROJECT = async (req: Request, res: Response) => {
 
     const projectDetails: any = updatedProject.projectDetails;
 
-
     user.enrolledProjects.push({
       projectId,
       projectName: projectDetails.name,
@@ -197,7 +191,6 @@ const ENROLL_PROJECT = async (req: Request, res: Response) => {
     });
 
     await user.save();
-
 
     updatedProject.applied_contributors.push({
       userId: localUser._id,
@@ -394,7 +387,7 @@ const GET_LEADERBOARD = async (req: Request, res: Response) => {
     const leaderboard = await EvaluationStorage.find().sort({
       totalPoints: -1,
     });
-
+    
     res.status(200).send(leaderboard);
   } catch (error) {
     console.error(error);
