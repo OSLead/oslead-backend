@@ -18,6 +18,12 @@ const evalSchema = new mongoose_1.default.Schema({
             difficulty: { type: String, required: true },
         },
     ],
+    adminAssignedPointsHistory: [
+        {
+            points: { type: Number, required: true },
+            date: { type: Date, required: true, default: Date.now },
+        },
+    ],
 });
 evalSchema.statics.build = (attr) => {
     return new EvaluationStorage(attr);

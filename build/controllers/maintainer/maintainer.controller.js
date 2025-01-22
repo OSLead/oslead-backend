@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BAN_MAINTAINER = exports.GET_ALL_MAINTAINERS = exports.GET_MAINTAINER_PERSONAL_DETAILS = void 0;
 const response_messages_1 = require("../../utils/response_messages");
 const maintainer_model_1 = require("../../models/maintainer.model");
+const evaluatedpulls_model_1 = require("../../models/evaluatedpulls.model");
 const GET_MAINTAINER_PERSONAL_DETAILS = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = res.locals.userId;
     try {
@@ -20,7 +21,13 @@ const GET_MAINTAINER_PERSONAL_DETAILS = (req, res) => __awaiter(void 0, void 0, 
             res.status(404).send({ message: response_messages_1.ERRORS_MESSAGE.ERROR_404 });
             return;
         }
-        res.status(200).send(result);
+        const EvaluatedStorageHistory = yield evaluatedpulls_model_1.EvaluatedStorage.find({
+            github_id: result.github_id,
+        });
+        const maintainer = result.toObject();
+        res
+            .status(200)
+            .send(Object.assign(Object.assign({}, maintainer), { evalDetails: EvaluatedStorageHistory }));
     }
     catch (error) {
         console.error(error);
