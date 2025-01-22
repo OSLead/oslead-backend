@@ -13,6 +13,12 @@ interface IEvaluation {
       difficulty: string;
     }
   ];
+  adminAssignedPointsHistory: [
+    {
+      points: number;
+      date: Date;
+    }
+  ];
 }
 
 interface evaluationModelInterface extends mongoose.Model<EvalDoc> {
@@ -32,6 +38,12 @@ interface EvalDoc extends mongoose.Document {
       difficulty: string;
     }
   ];
+  adminAssignedPointsHistory: [
+    {
+      points: number;
+      date: Date;
+    }
+  ];
 }
 
 const evalSchema = new mongoose.Schema({
@@ -45,6 +57,12 @@ const evalSchema = new mongoose.Schema({
       points: { type: Number, required: true },
       description: { type: String, required: true },
       difficulty: { type: String, required: true },
+    },
+  ],
+  adminAssignedPointsHistory: [
+    {
+      points: { type: Number, required: true },
+      date: { type: Date, required: true, default: Date.now },
     },
   ],
 });

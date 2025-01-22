@@ -2,6 +2,7 @@ import { Response, Request } from "express";
 import { Maintainer } from "../../models/maintainer.model";
 import { ERRORS_MESSAGE } from "../../utils/response_messages";
 
+
 const MAINTAINER_REGISTER = async (req: Request, res: Response) => {
   const userId = res.locals.userId;
   try {
